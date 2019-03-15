@@ -28,7 +28,7 @@ module Resque
     # This job would iterate num times updating the status as it goes. At the end
     # we update the status telling anyone listening to this job that its complete.
     module Status
-      VERSION = 'sifi-0.4.4'
+      VERSION = '0.4.4'
 
       STATUS_QUEUED = 'queued'
       STATUS_WORKING = 'working'
