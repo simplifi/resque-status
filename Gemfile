@@ -1,5 +1,6 @@
 source 'https://rubygems.org'
 
+gem 'oj'
 gem 'resque', '~>1.19'
 
 group :test do
