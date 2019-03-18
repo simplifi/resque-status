@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 
 gem 'oj'
-gem 'resque', '~>1.19'
+gem 'resque', '~> 2.0'
 
 group :test do
   gem 'mocha', '~>0.9'
