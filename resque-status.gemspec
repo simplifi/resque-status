@@ -43,7 +43,6 @@ Gem::Specification.new do |s|
     "test/test_resque_plugins_status_hash.rb"
   ]
   s.homepage = "http://github.com/quirkey/resque-status".freeze
-  s.rubyforge_project = "quirkey".freeze
   s.rubygems_version = "2.7.6".freeze
   s.summary = "resque-status is an extension to the resque queue system that provides simple trackable jobs.".freeze
 
