@@ -9,6 +9,8 @@ module Resque
       # creating/updating/retrieving status objects from Redis
       class Hash < ::Hash
 
+        OJ_OPTIONS = { mode: :rails }.freeze
+
         # Create a status, generating a new UUID, passing the message to the status
         # Returns the UUID of the new status.
         def self.create(uuid, *messages)
@@ -21,7 +23,7 @@ module Resque
         # Get a status by UUID. Returns a Resque::Plugins::Status::Hash
         def self.get(uuid)
           val = redis.get(status_key(uuid))
-          val ? Resque::Plugins::Status::Hash.new(uuid, decode(val)) : nil
+          val ? Resque::Plugins::Status::Hash.new(uuid, Oj.load(val)) : nil
         end
 
         # Get multiple statuses by UUID. Returns array of Resque::Plugins::Status::Hash
@@ -31,7 +33,7 @@ module Resque
           vals = redis.mget(*status_keys)
 
           uuids.zip(vals).map do |uuid, val|
-            val ? Resque::Plugins::Status::Hash.new(uuid, decode(val)) : nil
+            val ? Resque::Plugins::Status::Hash.new(uuid, Oj.load(val)) : nil
           end
         end
 
@@ -39,7 +41,7 @@ module Resque
         # that are merged in order to create a single status.
         def self.set(uuid, *messages)
           val = Resque::Plugins::Status::Hash.new(uuid, *messages)
-          redis.set(status_key(uuid), encode(val))
+          redis.set(status_key(uuid), Oj.dump(val, OJ_OPTIONS))
           if expire_in
             redis.expire(status_key(uuid), expire_in)
           end
@@ -198,7 +200,7 @@ module Resque
 
         # Proxy deprecated methods directly back to Resque itself.
         class << self
-          [:redis, :encode, :decode].each do |method|
+          [:redis].each do |method|
             define_method(method) { |*args| Resque.send(method, *args) }
           end
         end
@@ -272,7 +274,7 @@ module Resque
         def json
           h = self.dup
           h['pct_complete'] = pct_complete
-          self.class.encode(h)
+          Oj.dump(h, OJ_OPTIONS)
         end
 
         def inspect
